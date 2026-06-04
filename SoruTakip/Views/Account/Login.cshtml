@@ -1,0 +1,38 @@
+@model SoruTakip.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div style="max-width: 420px; margin: 3rem auto;">
+    <p class="page-title">Welcome back</p>
+
+    <div class="card-st">
+        <form asp-action="Login" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger-st mb-3"></div>
+
+            <div style="margin-bottom: 1rem;">
+                <label class="form-label-st">Email</label>
+                <input asp-for="Email" class="form-control-st" placeholder="you@example.com" />
+                <span asp-validation-for="Email" class="text-danger-st"></span>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label class="form-label-st">Password</label>
+                <input asp-for="Password" type="password" class="form-control-st" placeholder="••••••" />
+                <span asp-validation-for="Password" class="text-danger-st"></span>
+            </div>
+
+            <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+                <input asp-for="RememberMe" type="checkbox" style="accent-color: var(--burgundy); width: 15px; height: 15px;" />
+                <label asp-for="RememberMe" style="font-size: 13px; color: var(--slate-light); margin: 0;">Remember me</label>
+            </div>
+
+            <button type="submit" class="btn-primary-st">Login</button>
+        </form>
+
+        <p style="font-size: 13px; color: var(--slate-light); text-align: center; margin-top: 1rem;">
+            Don't have an account? <a asp-action="Register" style="color: var(--burgundy); text-decoration: none;">Register</a>
+        </p>
+    </div>
+</div>

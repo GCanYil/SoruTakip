@@ -1,0 +1,45 @@
+@model SoruTakip.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div style="max-width: 420px; margin: 3rem auto;">
+    <p class="page-title">Create an account</p>
+
+    <div class="card-st">
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger-st mb-3"></div>
+
+            <div style="margin-bottom: 1rem;">
+                <label class="form-label-st">Username</label>
+                <input asp-for="UserName" class="form-control-st" placeholder="yourname" />
+                <span asp-validation-for="UserName" class="text-danger-st"></span>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label class="form-label-st">Email</label>
+                <input asp-for="Email" class="form-control-st" placeholder="you@example.com" />
+                <span asp-validation-for="Email" class="text-danger-st"></span>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label class="form-label-st">Password</label>
+                <input asp-for="Password" type="password" class="form-control-st" placeholder="••••••" />
+                <span asp-validation-for="Password" class="text-danger-st"></span>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label class="form-label-st">Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control-st" placeholder="••••••" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger-st"></span>
+            </div>
+
+            <button type="submit" class="btn-primary-st">Register</button>
+        </form>
+
+        <p style="font-size: 13px; color: var(--slate-light); text-align: center; margin-top: 1rem;">
+            Already have an account? <a asp-action="Login" style="color: var(--burgundy); text-decoration: none;">Login</a>
+        </p>
+    </div>
+</div>
