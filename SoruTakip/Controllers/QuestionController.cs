@@ -212,4 +212,19 @@ public class QuestionController:Controller
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
+    
+    [HttpPost]
+    public async Task<IActionResult> MarkAsSolved(int id)
+    {
+        var userId = _userManager.GetUserId(User)!;
+        var question = await _context.Questions
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
+        if (question == null)
+        {
+            return NotFound();
+        }
+        question.Status = QuestionStatus.Solved;
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
 }

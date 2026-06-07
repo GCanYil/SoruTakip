@@ -1,0 +1,175 @@
+@{
+ViewData["Title"] = "Dashboard";
+}
+
+<p class="page-title">Dashboard</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 1.5rem;">
+    <div class="card-st" style="text-align: center;">
+        <p style="font-size: 12px; color: var(--slate-light); margin-bottom: 4px;">Total Questions</p>
+        <p style="font-size: 28px; font-weight: 500; color: var(--slate); margin: 0;">@ViewBag.TotalQuestions</p>
+    </div>
+    <div class="card-st" style="text-align: center;">
+        <p style="font-size: 12px; color: var(--slate-light); margin-bottom: 4px;">Solved</p>
+        <p style="font-size: 28px; font-weight: 500; color: #2D6A4F; margin: 0;">@ViewBag.SolvedQuestions</p>
+    </div>
+    <div class="card-st" style="text-align: center;">
+        <p style="font-size: 12px; color: var(--slate-light); margin-bottom: 4px;">Stuck</p>
+        <p style="font-size: 28px; font-weight: 500; color: var(--burgundy); margin: 0;">@ViewBag.StuckQuestions</p>
+    </div>
+    <div class="card-st" style="text-align: center;">
+        <p style="font-size: 12px; color: var(--slate-light); margin-bottom: 4px;">This Week</p>
+        <p style="font-size: 28px; font-weight: 500; color: var(--slate); margin: 0;">@ViewBag.ThisWeekTotal</p>
+    </div>
+    <div class="card-st" style="text-align: center;">
+        <p style="font-size: 12px; color: var(--slate-light); margin-bottom: 4px;">This Month</p>
+        <p style="font-size: 28px; font-weight: 500; color: var(--slate); margin: 0;">@ViewBag.ThisMonthTotal</p>
+    </div>
+    <div class="card-st" style="text-align: center;">
+        <p style="font-size: 12px; color: var(--slate-light); margin-bottom: 4px;">Folders</p>
+        <p style="font-size: 28px; font-weight: 500; color: var(--slate); margin: 0;">@ViewBag.TotalFolders</p>
+    </div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 1.5rem;">
+
+    <div class="card-st">
+        <p style="font-size: 14px; font-weight: 500; color: var(--burgundy-dark); margin-bottom: 1rem;">
+            <i class="ti ti-books" aria-hidden="true"></i> Questions by Subject
+        </p>
+        <div style="overflow-y: auto; max-height: 280px;">
+            @if (ViewBag.SubjectStats != null && ViewBag.SubjectStats.Count > 0)
+            {
+                @foreach (var stat in ViewBag.SubjectStats)
+                {
+                    var percent = ViewBag.TotalQuestions > 0
+                        ? (int)((stat.Total / (double)ViewBag.TotalQuestions) * 100)
+                        : 0;
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-size: 13px; color: var(--slate);">@stat.Subject</span>
+                            <div style="display: flex; gap: 8px; font-size: 12px;">
+                                <span style="color: var(--slate-light);">@stat.Total total</span>
+                                <span style="color: #2D6A4F;">@stat.Solved solved</span>
+                                <span style="color: var(--burgundy);">@stat.Stuck stuck</span>
+                            </div>
+                        </div>
+                        <div style="background: var(--cream); border-radius: 20px; height: 6px;">
+                            <div style="background: var(--burgundy); border-radius: 20px; height: 6px; width: @(percent)%;"></div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p style="font-size: 13px; color: var(--slate-light);">No data yet.</p>
+            }
+        </div>
+    </div>
+
+    <div class="card-st">
+        <p style="font-size: 14px; font-weight: 500; color: var(--burgundy-dark); margin-bottom: 1rem;">
+            <i class="ti ti-chart-bar" aria-hidden="true"></i> Questions by Topic
+        </p>
+        <div style="overflow-y: auto; max-height: 280px;">
+            @if (ViewBag.TopicStats != null && ViewBag.TopicStats.Count > 0)
+            {
+                <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                    <thead>
+                        <tr style="color: var(--slate-light); border-bottom: 0.5px solid var(--border);">
+                            <th style="text-align: left; padding: 6px 0; font-weight: 500;">Subject / Topic</th>
+                            <th style="text-align: center; padding: 6px 4px; font-weight: 500;">Total</th>
+                            <th style="text-align: center; padding: 6px 4px; font-weight: 500;">Solved</th>
+                            <th style="text-align: center; padding: 6px 4px; font-weight: 500;">Stuck</th>
+                            <th style="text-align: center; padding: 6px 4px; font-weight: 500;">7d</th>
+                            <th style="text-align: center; padding: 6px 4px; font-weight: 500;">30d</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var stat in ViewBag.TopicStats)
+                        {
+                            <tr style="border-bottom: 0.5px solid var(--border);">
+                                <td style="padding: 8px 0;">
+                                    <p style="font-size: 12px; color: var(--slate); margin: 0;">@stat.Subject</p>
+                                    <p style="font-size: 11px; color: var(--slate-light); margin: 0;">@stat.Topic</p>
+                                </td>
+                                <td style="text-align: center; padding: 8px 4px; color: var(--slate);">@stat.Total</td>
+                                <td style="text-align: center; padding: 8px 4px; color: #2D6A4F;">@stat.Solved</td>
+                                <td style="text-align: center; padding: 8px 4px; color: var(--burgundy);">@stat.Stuck</td>
+                                <td style="text-align: center; padding: 8px 4px; color: var(--slate-light);">@stat.LastWeek</td>
+                                <td style="text-align: center; padding: 8px 4px; color: var(--slate-light);">@stat.LastMonth</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p style="font-size: 13px; color: var(--slate-light);">No data yet.</p>
+            }
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="card-st">
+            <p style="font-size: 14px; font-weight: 500; color: var(--burgundy-dark); margin-bottom: 1rem;">
+                <i class="ti ti-folder" aria-hidden="true"></i> Folders
+            </p>
+            @if (ViewBag.FolderStats != null && ViewBag.FolderStats.Count > 0)
+            {
+                @foreach (var folder in ViewBag.FolderStats)
+                {
+                    var solvedPercent = folder.Total > 0 ? (int)((folder.Solved / (double)folder.Total) * 100) : 0;
+                    <div style="margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-size: 13px; color: var(--slate);">@folder.Name</span>
+                            <span style="font-size: 12px; color: var(--slate-light);">@folder.Solved / @folder.Total solved</span>
+                        </div>
+                        <div style="background: var(--cream); border-radius: 20px; height: 6px;">
+                            <div style="background: #2D6A4F; border-radius: 20px; height: 6px; width: @(solvedPercent)%;"></div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p style="font-size: 13px; color: var(--slate-light);">No folders yet.</p>
+            }
+        </div>
+
+        <div class="card-st">
+            <p style="font-size: 14px; font-weight: 500; color: var(--burgundy-dark); margin-bottom: 1rem;">
+                <i class="ti ti-clock" aria-hidden="true"></i> Recent Questions
+            </p>
+            @if (ViewBag.RecentQuestions != null)
+            {
+                @foreach (var question in ViewBag.RecentQuestions)
+                {
+                    <div style="display: flex; align-items: center; justify-content: space-between;
+                                padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+                        <div>
+                            <p style="font-size: 13px; color: var(--slate); margin: 0;">
+                                @question.Subject.Name · @question.Topic.Name
+                            </p>
+                            <p style="font-size: 11px; color: var(--slate-light); margin: 0;">
+                                @question.CreatedAt.ToString("MMM dd, yyyy")
+                            </p>
+                        </div>
+                        @if (question.Status == SoruTakip.Models.QuestionStatus.Stuck)
+                        {
+                            <span style="font-size: 11px; background: #FCE8ED; color: var(--burgundy); padding: 3px 8px; border-radius: 20px;">Stuck</span>
+                        }
+                        else
+                        {
+                            <span style="font-size: 11px; background: #E6F4EC; color: #2D6A4F; padding: 3px 8px; border-radius: 20px;">Solved</span>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <p style="font-size: 13px; color: var(--slate-light);">No questions yet.</p>
+            }
+        </div>
+    </div>
+
+</div>
