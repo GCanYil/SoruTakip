@@ -1,0 +1,42 @@
+@model IEnumerable<SoruTakip.Models.Topic>
+
+@{
+    ViewData["Title"] = "Topics";
+}
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+    <p class="page-title" style="margin: 0;">Topics</p>
+    <a asp-action="Create" class="btn-primary-st" style="text-decoration: none; width: auto; padding: 8px 16px;">
+        <i class="ti ti-plus" aria-hidden="true"></i> Add Topic
+    </a>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px;">
+    @foreach (var topic in Model)
+    {
+        <div class="card-st" style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <p style="font-size: 15px; font-weight: 500; color: var(--slate); margin: 0;">@topic.Name</p>
+                <p style="font-size: 12px; color: var(--slate-light); margin: 0;">@topic.Subject.Name</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <a asp-action="Edit" asp-route-id="@topic.Id" class="btn-secondary-st" style="text-decoration: none; font-size: 13px;">
+                    <i class="ti ti-edit" aria-hidden="true"></i> Edit
+                </a>
+                <form asp-action="Delete" asp-route-id="@topic.Id" method="post" style="margin: 0;">
+                    <button type="submit" class="btn-secondary-st" style="font-size: 13px; color: #A32D2D;"
+                            onclick="return confirm('Delete this topic?')">
+                        <i class="ti ti-trash" aria-hidden="true"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card-st" style="text-align: center; color: var(--slate-light); font-size: 14px;">
+            No topics yet. <a asp-action="Create" style="color: var(--burgundy); text-decoration: none;">Add one</a>
+        </div>
+    }
+</div>

@@ -1,0 +1,88 @@
+@model SoruTakip.ViewModels.QuestionViewModel
+
+@{
+    ViewData["Title"] = "Edit Question";
+}
+
+<div style="max-width: 560px; margin: 2rem auto;">
+    <p class="page-title">Edit Question</p>
+
+    <div class="card-st">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger-st" style="margin-bottom: 1rem;"></div>
+
+            <input asp-for="Id" type="hidden" />
+
+            <div style="margin-bottom: 1rem;">
+                <label class="form-label-st">Subject</label>
+                <select asp-for="SubjectId" class="form-control-st" id="subjectSelect">
+                    <option value="">— Select a subject —</option>
+                    @foreach (var subject in (IEnumerable<SoruTakip.Models.Subject>)ViewBag.Subjects)
+                    {
+                        <option value="@subject.Id">@subject.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="SubjectId" class="text-danger-st"></span>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label class="form-label-st">Topic</label>
+                <select asp-for="TopicId" class="form-control-st" id="topicSelect">
+                    <option value="">— Select a topic —</option>
+                    @foreach (var topic in (IEnumerable<SoruTakip.Models.Topic>)ViewBag.Topics)
+                    {
+                        <option value="@topic.Id" data-subject="@topic.SubjectId">@topic.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="TopicId" class="text-danger-st"></span>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label class="form-label-st">Status</label>
+                <select asp-for="Status" class="form-control-st">
+                    <option value="0">Stuck</option>
+                    <option value="1">Solved</option>
+                </select>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <div style="margin-bottom: 1rem;">
+                    <label class="form-label-st">Current Image</label>
+                    <img src="@Model.ImagePath" alt="Current Image"
+                         style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px;" />
+                </div>
+            }
+
+            <div style="margin-bottom: 1.5rem;">
+                <label class="form-label-st">@(string.IsNullOrEmpty(Model.ImagePath) ? "Question Image" : "Replace Image")</label>
+                <input asp-for="ImageFile" type="file" accept="image/*" class="form-control-st"
+                       style="padding: 6px 12px;" />
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn-primary-st" style="width: auto; padding: 8px 20px;">Save</button>
+                <a asp-action="Index" class="btn-secondary-st" style="text-decoration: none;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const subjectSelect = document.getElementById('subjectSelect');
+        const topicSelect = document.getElementById('topicSelect');
+        const allTopics = Array.from(topicSelect.options);
+
+        subjectSelect.addEventListener('change', function () {
+            const selectedSubject = this.value;
+            topicSelect.innerHTML = '<option value="">— Select a topic —</option>';
+
+            allTopics.forEach(opt => {
+                if (opt.dataset.subject === selectedSubject) {
+                    topicSelect.appendChild(opt.cloneNode(true));
+                }
+            });
+        });
+    </script>
+}

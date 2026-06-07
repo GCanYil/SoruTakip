@@ -1,0 +1,26 @@
+@model SoruTakip.ViewModels.SubjectViewModel
+
+@{
+    ViewData["Title"] = "Add Subject";
+}
+
+<div style="max-width: 480px; margin: 2rem auto;">
+    <p class="page-title">Add Subject</p>
+
+    <div class="card-st">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger-st" style="margin-bottom: 1rem;"></div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label class="form-label-st">Subject Name</label>
+                <input asp-for="Name" class="form-control-st" placeholder="e.g. Mathematics" />
+                <span asp-validation-for="Name" class="text-danger-st"></span>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn-primary-st" style="width: auto; padding: 8px 20px;">Save</button>
+                <a asp-action="Index" class="btn-secondary-st" style="text-decoration: none;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

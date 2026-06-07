@@ -1,0 +1,89 @@
+@model SoruTakip.Models.Question
+
+@{
+    ViewData["Title"] = "Question Detail";
+}
+
+<div style="max-width: 680px; margin: 2rem auto;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <p class="page-title" style="margin: 0;">Question Detail</p>
+        <div style="display: flex; gap: 8px;">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-secondary-st" style="text-decoration: none; font-size: 13px;">
+                <i class="ti ti-edit" aria-hidden="true"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn-secondary-st" style="text-decoration: none; font-size: 13px;">
+                <i class="ti ti-arrow-left" aria-hidden="true"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <div class="card-st" style="margin-bottom: 1rem;">
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Model.ImagePath" alt="Question Image"
+                 style="width: 100%; border-radius: 8px; margin-bottom: 1rem;" />
+        }
+        else
+        {
+            <div style="width: 100%; height: 200px; background: var(--cream); border-radius: 8px;
+                        display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                <i class="ti ti-photo-off" style="font-size: 40px; color: var(--slate-light);" aria-hidden="true"></i>
+            </div>
+        }
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem;">
+            <span style="font-size: 12px; background: var(--cream); color: var(--slate); padding: 4px 10px; border-radius: 20px; border: 0.5px solid var(--border);">
+                <i class="ti ti-books" aria-hidden="true"></i> @Model.Subject.Name
+            </span>
+            <span style="font-size: 12px; background: var(--cream); color: var(--slate); padding: 4px 10px; border-radius: 20px; border: 0.5px solid var(--border);">
+                <i class="ti ti-tag" aria-hidden="true"></i> @Model.Topic.Name
+            </span>
+            @if (Model.Status == SoruTakip.Models.QuestionStatus.Stuck)
+            {
+                <span style="font-size: 12px; background: #FCE8ED; color: var(--burgundy); padding: 4px 10px; border-radius: 20px;">Stuck</span>
+            }
+            else
+            {
+                <span style="font-size: 12px; background: #E6F4EC; color: #2D6A4F; padding: 4px 10px; border-radius: 20px;">Solved</span>
+            }
+        </div>
+
+        <p style="font-size: 12px; color: var(--slate-light); margin: 0;">
+            Added on @Model.CreatedAt.ToString("MMMM dd, yyyy")
+        </p>
+    </div>
+
+    <div class="card-st">
+        <p style="font-size: 14px; font-weight: 500; color: var(--burgundy-dark); margin-bottom: 1rem;">
+            <i class="ti ti-notes" aria-hidden="true"></i> Analysis Notes
+        </p>
+
+        @if (Model.Analyses.Any())
+        {
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem;">
+                @foreach (var analysis in Model.Analyses.OrderByDescending(a => a.CreatedAt))
+                {
+                    <div style="background: var(--cream); border-radius: 8px; padding: 10px 14px;">
+                        <p style="font-size: 13px; color: var(--slate); margin: 0;">@analysis.Note</p>
+                        <p style="font-size: 11px; color: var(--slate-light); margin: 4px 0 0;">@analysis.CreatedAt.ToString("MMM dd, yyyy")</p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p style="font-size: 13px; color: var(--slate-light); margin-bottom: 1rem;">No analysis notes yet.</p>
+        }
+
+        <form asp-controller="Analysis" asp-action="Create" method="post">
+            <input type="hidden" name="QuestionId" value="@Model.Id" />
+            <div style="margin-bottom: 0.75rem;">
+                <textarea name="Note" class="form-control-st" rows="3"
+                          placeholder="Add a note about this question..." style="resize: vertical;"></textarea>
+            </div>
+            <button type="submit" class="btn-primary-st" style="width: auto; padding: 8px 16px;">
+                <i class="ti ti-plus" aria-hidden="true"></i> Add Note
+            </button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,138 @@
+@model IEnumerable<SoruTakip.Models.Question>
+
+@{
+    ViewData["Title"] = "My Questions";
+}
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+    <p class="page-title" style="margin: 0;">My Questions</p>
+    <a asp-action="Create" class="btn-primary-st" style="text-decoration: none; width: auto; padding: 8px 16px;">
+        <i class="ti ti-plus" aria-hidden="true"></i> Add Question
+    </a>
+</div>
+
+<div class="card-st" style="margin-bottom: 1.5rem;">
+    <form asp-action="Index" method="get" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div>
+            <label class="form-label-st">Subject</label>
+            <select name="subjectId" class="form-control-st" style="width: 160px;">
+                <option value="">All Subjects</option>
+                @foreach (var subject in (IEnumerable<SoruTakip.Models.Subject>)ViewBag.Subjects)
+                {
+                    <option value="@subject.Id" selected="@(ViewBag.SelectedSubjectId == subject.Id ? "selected" : null)">
+                        @subject.Name
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div>
+            <label class="form-label-st">Topic</label>
+            <select name="topicId" class="form-control-st" style="width: 160px;">
+                <option value="">All Topics</option>
+                @foreach (var topic in (IEnumerable<SoruTakip.Models.Topic>)ViewBag.Topics)
+                {
+                    <option value="@topic.Id" data-subject="@topic.SubjectId"
+                            selected="@(ViewBag.SelectedTopicId == topic.Id ? "selected" : null)">
+                        @topic.Name
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div>
+            <label class="form-label-st">Status</label>
+            <select name="status" class="form-control-st" style="width: 130px;">
+                <option value="">All</option>
+                <option value="0" selected="@(ViewBag.SelectedStatus == SoruTakip.Models.QuestionStatus.Stuck ? "selected" : null)">Stuck</option>
+                <option value="1" selected="@(ViewBag.SelectedStatus == SoruTakip.Models.QuestionStatus.Solved ? "selected" : null)">Solved</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-primary-st" style="width: auto; padding: 8px 16px;">Filter</button>
+        <a asp-action="Index" class="btn-secondary-st" style="text-decoration: none;">Reset</a>
+    </form>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
+    @foreach (var question in Model)
+    {
+        <div class="card-st" style="display: flex; flex-direction: column; gap: 10px;">
+            @if (!string.IsNullOrEmpty(question.ImagePath))
+            {
+                <img src="@question.ImagePath" alt="Question Image"
+                     style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px;" />
+            }
+            else
+            {
+                <div style="width: 100%; height: 160px; background: var(--cream); border-radius: 8px;
+                            display: flex; align-items: center; justify-content: center;">
+                    <i class="ti ti-photo-off" style="font-size: 32px; color: var(--slate-light);" aria-hidden="true"></i>
+                </div>
+            }
+
+            <div>
+                <p style="font-size: 13px; font-weight: 500; color: var(--slate); margin: 0;">@question.Subject.Name · @question.Topic.Name</p>
+                <p style="font-size: 11px; color: var(--slate-light); margin: 4px 0 0;">@question.CreatedAt.ToString("MMM dd, yyyy")</p>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                @if (question.Status == SoruTakip.Models.QuestionStatus.Stuck)
+                {
+                    <span style="font-size: 11px; background: #FCE8ED; color: var(--burgundy); padding: 3px 8px; border-radius: 20px;">Stuck</span>
+                }
+                else
+                {
+                    <span style="font-size: 11px; background: #E6F4EC; color: #2D6A4F; padding: 3px 8px; border-radius: 20px;">Solved</span>
+                }
+
+                <div style="display: flex; gap: 6px;">
+                    <a asp-action="Detail" asp-route-id="@question.Id"
+                       style="color: var(--slate-light); text-decoration: none; font-size: 16px;">
+                        <i class="ti ti-eye" aria-hidden="true"></i>
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@question.Id"
+                       style="color: var(--slate-light); text-decoration: none; font-size: 16px;">
+                        <i class="ti ti-edit" aria-hidden="true"></i>
+                    </a>
+                    <form asp-action="Delete" asp-route-id="@question.Id" method="post" style="margin: 0;">
+                        <button type="submit" style="background: none; border: none; cursor: pointer; color: #A32D2D; font-size: 16px; padding: 0;"
+                                onclick="return confirm('Delete this question?')">
+                            <i class="ti ti-trash" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card-st" style="text-align: center; color: var(--slate-light); font-size: 14px; grid-column: 1/-1;">
+            No questions yet. <a asp-action="Create" style="color: var(--burgundy); text-decoration: none;">Add one</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        const subjectSelect = document.querySelector('select[name="subjectId"]');
+        const topicSelect = document.querySelector('select[name="topicId"]');
+        const allTopics = Array.from(topicSelect.options);
+
+        function filterTopics(selectedSubjectId) {
+            topicSelect.innerHTML = '<option value="">All Topics</option>';
+            allTopics.forEach(opt => {
+                if (!opt.dataset.subject || opt.dataset.subject === selectedSubjectId) {
+                    topicSelect.appendChild(opt.cloneNode(true));
+                }
+            });
+        }
+
+        subjectSelect.addEventListener('change', function () {
+            filterTopics(this.value);
+        });
+
+        filterTopics(subjectSelect.value);
+    </script>
+}
