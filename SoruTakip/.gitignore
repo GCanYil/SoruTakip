@@ -1,0 +1,20 @@
+## .NET
+bin/
+obj/
+/packages/
+*.user
+*.suo
+*.userprefs
+
+## Rider
+riderModule.iml
+/_ReSharper.Caches/
+.idea/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Images
+wwwroot/images/*
+!wwwroot/images/.gitkeep

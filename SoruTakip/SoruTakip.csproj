@@ -16,8 +16,4 @@
       <PackageReference Include="SkiaSharp" Version="4.147.0-preview.3.1" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="wwwroot\images\" />
-    </ItemGroup>
-
 </Project>
