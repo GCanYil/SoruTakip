@@ -52,7 +52,35 @@
             Added on @Model.CreatedAt.ToString("MMMM dd, yyyy")
         </p>
     </div>
+    <div class="card-st" style="margin-bottom: 1rem;">
+        <p style="font-size: 14px; font-weight: 500; color: var(--burgundy-dark); margin-bottom: 1rem;">
+            <i class="ti ti-folder-plus" aria-hidden="true"></i> Add to Folder
+        </p>
 
+        @if (ViewBag.Folders != null && ((IEnumerable<SoruTakip.Models.Folder>)ViewBag.Folders).Any())
+        {
+            <form asp-controller="Folder" asp-action="AddQuestion" method="post"
+                  style="display: flex; gap: 8px; align-items: center;">
+                <input type="hidden" name="questionId" value="@Model.Id" />
+                <select name="folderId" class="form-control-st" style="flex: 1;">
+                    <option value="">— Select a folder —</option>
+                    @foreach (var folder in (IEnumerable<SoruTakip.Models.Folder>)ViewBag.Folders)
+                    {
+                        <option value="@folder.Id">@folder.Name</option>
+                    }
+                </select>
+                <button type="submit" class="btn-primary-st" style="width: auto; padding: 8px 16px;">
+                    <i class="ti ti-plus" aria-hidden="true"></i> Add
+                </button>
+            </form>
+        }
+        else
+        {
+            <p style="font-size: 13px; color: var(--slate-light);">
+                No folders yet. <a asp-controller="Folder" asp-action="Create" style="color: var(--burgundy); text-decoration: none;">Create one</a>
+            </p>
+        }
+    </div>
     <div class="card-st">
         <p style="font-size: 14px; font-weight: 500; color: var(--burgundy-dark); margin-bottom: 1rem;">
             <i class="ti ti-notes" aria-hidden="true"></i> Analysis Notes

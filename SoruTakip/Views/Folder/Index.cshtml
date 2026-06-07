@@ -1,0 +1,55 @@
+@model IEnumerable<SoruTakip.ViewModels.FolderViewModel>
+
+@{
+    ViewData["Title"] = "Folders";
+}
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+    <p class="page-title" style="margin: 0;">Folders</p>
+    <a asp-action="Create" class="btn-primary-st" style="text-decoration: none; width: auto; padding: 8px 16px;">
+        <i class="ti ti-plus" aria-hidden="true"></i> New Folder
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
+    @foreach (var folder in Model)
+    {
+        <div class="card-st" style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 36px; height: 36px; background: #FCE8ED; border-radius: 8px;
+                            display: flex; align-items: center; justify-content: center;">
+                    <i class="ti ti-folder" style="font-size: 18px; color: var(--burgundy);" aria-hidden="true"></i>
+                </div>
+                <div>
+                    <p style="font-size: 14px; font-weight: 500; color: var(--slate); margin: 0;">@folder.Name</p>
+                    <p style="font-size: 12px; color: var(--slate-light); margin: 0;">@folder.QuestionCount question(s)</p>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 6px;">
+                <a asp-action="Detail" asp-route-id="@folder.Id" class="btn-primary-st"
+                   style="text-decoration: none; font-size: 12px; padding: 6px 12px; width: auto;">
+                    Open
+                </a>
+                <a asp-action="Edit" asp-route-id="@folder.Id" class="btn-secondary-st"
+                   style="text-decoration: none; font-size: 12px; padding: 6px 12px;">
+                    <i class="ti ti-edit" aria-hidden="true"></i>
+                </a>
+                <form asp-action="Delete" asp-route-id="@folder.Id" method="post" style="margin: 0;">
+                    <button type="submit" class="btn-secondary-st"
+                            style="font-size: 12px; padding: 6px 12px; color: #A32D2D;"
+                            onclick="return confirm('Delete this folder?')">
+                        <i class="ti ti-trash" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card-st" style="text-align: center; color: var(--slate-light); font-size: 14px; grid-column: 1/-1;">
+            No folders yet. <a asp-action="Create" style="color: var(--burgundy); text-decoration: none;">Create one</a>
+        </div>
+    }
+</div>

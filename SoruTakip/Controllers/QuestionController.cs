@@ -56,18 +56,22 @@ public class QuestionController:Controller
     [HttpGet]
     public async Task<IActionResult> Create()
     {
+        var userId = _userManager.GetUserId(User)!;
         ViewBag.Subjects = await _context.Subjects.ToListAsync();
         ViewBag.Topics = await _context.Topics.ToListAsync();
+        ViewBag.Folders = await _context.Folders.Where(f => f.UserId == userId).ToListAsync();
         return View(new QuestionViewModel());
     }
     
     [HttpPost]
-    public async Task<IActionResult> Create([Bind("SubjectId,TopicId,Status,ImageFile")] QuestionViewModel model)
+    public async Task<IActionResult> Create([Bind("SubjectId,TopicId,Status,ImageFile")] QuestionViewModel model, int? folderId)
     {
         if (!ModelState.IsValid)
         {
+            var uid = _userManager.GetUserId(User)!;
             ViewBag.Subjects = await _context.Subjects.ToListAsync();
             ViewBag.Topics = await _context.Topics.ToListAsync();
+            ViewBag.Folders = await _context.Folders.Where(f => f.UserId == uid).ToListAsync();
             return View(model);
         }
 
@@ -90,6 +94,20 @@ public class QuestionController:Controller
         }
         _context.Questions.Add(question);
         await _context.SaveChangesAsync();
+        if (folderId.HasValue)
+        {
+            var folder = await _context.Folders.FirstOrDefaultAsync(x => x.Id == folderId
+                                                                         && x.UserId == userId);
+            if (folder != null)
+            {
+                _context.QuestionFolders.Add(new QuestionFolder
+                {
+                    FolderId = folderId.Value,
+                    QuestionId = question.Id
+                });
+                await _context.SaveChangesAsync();
+            }
+        }
         return RedirectToAction(nameof(Index));
     }
     
@@ -102,7 +120,12 @@ public class QuestionController:Controller
             .Include(x => x.Topic)
             .Include(x => x.Analyses)
             .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
-        if (question == null) return NotFound();
+        if (question == null)
+        {
+            return NotFound();
+        }
+
+        ViewBag.Folders = await _context.Folders.Where(x => x.UserId == userId).ToListAsync();
         return View(question);
     }
     

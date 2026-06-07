@@ -42,6 +42,16 @@
                     <option value="1">Solved</option>
                 </select>
             </div>
+            <div style="margin-bottom: 1rem;">
+                <label class="form-label-st">Add to Folder <span style="color: var(--slate-light); font-size: 11px;">(optional)</span></label>
+                <select name="folderId" class="form-control-st">
+                    <option value="">— No folder —</option>
+                    @foreach (var folder in (IEnumerable<SoruTakip.Models.Folder>)ViewBag.Folders)
+                    {
+                        <option value="@folder.Id">@folder.Name</option>
+                    }
+                </select>
+            </div>
 
             <div style="margin-bottom: 1.5rem;">
                 <label class="form-label-st">Question Image</label>

@@ -1,0 +1,75 @@
+@model SoruTakip.Models.Folder
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+    <p class="page-title" style="margin: 0;">@Model.Name</p>
+    <a asp-action="Index" class="btn-secondary-st" style="text-decoration: none; font-size: 13px;">
+        <i class="ti ti-arrow-left" aria-hidden="true"></i> Back
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
+    @foreach (var qf in Model.QuestionFolders)
+    {
+        var question = qf.Question;
+        <div class="card-st" style="display: flex; flex-direction: column; gap: 10px;">
+            @if (!string.IsNullOrEmpty(question.ImagePath))
+            {
+                <img src="@question.ImagePath" alt="Question Image"
+                     style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px;" />
+            }
+            else
+            {
+                <div style="width: 100%; height: 160px; background: var(--cream); border-radius: 8px;
+                            display: flex; align-items: center; justify-content: center;">
+                    <i class="ti ti-photo-off" style="font-size: 32px; color: var(--slate-light);" aria-hidden="true"></i>
+                </div>
+            }
+
+            <div>
+                <p style="font-size: 13px; font-weight: 500; color: var(--slate); margin: 0;">
+                    @question.Subject.Name · @question.Topic.Name
+                </p>
+                <p style="font-size: 11px; color: var(--slate-light); margin: 4px 0 0;">
+                    @question.CreatedAt.ToString("MMM dd, yyyy")
+                </p>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                @if (question.Status == SoruTakip.Models.QuestionStatus.Stuck)
+                {
+                    <span style="font-size: 11px; background: #FCE8ED; color: var(--burgundy); padding: 3px 8px; border-radius: 20px;">Stuck</span>
+                }
+                else
+                {
+                    <span style="font-size: 11px; background: #E6F4EC; color: #2D6A4F; padding: 3px 8px; border-radius: 20px;">Solved</span>
+                }
+
+                <div style="display: flex; gap: 6px;">
+                    <a asp-controller="Question" asp-action="Detail" asp-route-id="@question.Id"
+                       style="color: var(--slate-light); text-decoration: none; font-size: 16px;">
+                        <i class="ti ti-eye" aria-hidden="true"></i>
+                    </a>
+                    <form asp-action="RemoveQuestion" method="post" style="margin: 0;">
+                        <input type="hidden" name="folderId" value="@Model.Id" />
+                        <input type="hidden" name="questionId" value="@question.Id" />
+                        <button type="submit" style="background: none; border: none; cursor: pointer; color: #A32D2D; font-size: 16px; padding: 0;"
+                                onclick="return confirm('Remove from folder?')">
+                            <i class="ti ti-folder-minus" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!Model.QuestionFolders.Any())
+    {
+        <div class="card-st" style="text-align: center; color: var(--slate-light); font-size: 14px; grid-column: 1/-1;">
+            No questions in this folder yet.
+        </div>
+    }
+</div>
