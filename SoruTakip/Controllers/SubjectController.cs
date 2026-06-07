@@ -59,8 +59,21 @@ public class SubjectController :Controller
     [HttpPost]
     public async Task<IActionResult> Delete(int id)
     {
-        var subject = await _context.Subjects.FindAsync(id);
+        var subject = await _context.Subjects
+            .Include(s => s.Topics)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
         if (subject == null) return NotFound();
+
+        var hasQuestions = await _context.Questions
+            .AnyAsync(q => q.SubjectId == id);
+
+        if (hasQuestions)
+        {
+            TempData["Error"] = "Cannot delete this subject because it has questions assigned to it.";
+            return RedirectToAction(nameof(Index));
+        }
+
         _context.Subjects.Remove(subject);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));

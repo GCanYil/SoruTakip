@@ -1,3 +1,11 @@
+@if (TempData["Error"] != null)
+{
+    <div style="background: #FCE8ED; color: var(--burgundy); padding: 10px 16px;
+                border-radius: 8px; font-size: 13px; margin-bottom: 1rem;">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i> @TempData["Error"]
+    </div>
+}
+
 @model IEnumerable<SoruTakip.Models.Subject>
 
 @{

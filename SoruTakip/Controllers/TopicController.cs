@@ -87,6 +87,16 @@ public class TopicController : Controller
     {
         var topic = await _context.Topics.FindAsync(id);
         if (topic == null) return NotFound();
+
+        var hasQuestions = await _context.Questions
+            .AnyAsync(q => q.TopicId == id);
+
+        if (hasQuestions)
+        {
+            TempData["Error"] = "Cannot delete this topic because it has questions assigned to it.";
+            return RedirectToAction(nameof(Index));
+        }
+
         _context.Topics.Remove(topic);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
